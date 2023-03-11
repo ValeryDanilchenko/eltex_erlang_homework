@@ -41,7 +41,7 @@ to_rub2(Arg) ->
                 io:format("Convert ~p to rub, amount ~p~n", [krone, Amount]),
                 {ok, 10 * Amount};
             Error ->
-                io:format("Can't convert to rub, error ~p~n", [Error]),
+                io:format("Error, invalid arg ~p~n",[Error]),
                 {error, badarg}
         end,
     Result.
@@ -64,6 +64,6 @@ to_rub3(Arg) ->
             io:format("Convert ~p to rub, amount ~p~n", [krone, Amount]),
             {ok, 10 * Amount};
         Error ->
-            io:format("Can't convert to rub, error ~p~n", [Error]),
+            io:format("Error, invalid arg ~p~n",[Error]),
             {error, badarg}
     end.
