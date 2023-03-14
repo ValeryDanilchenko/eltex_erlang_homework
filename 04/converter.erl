@@ -32,19 +32,19 @@ map_to_rub(#{type := usd, amount := Amount, commission := Commission}) when Amou
     Result = Amount * 75.5, 
     CommissionResult = Amount * Commission,
     {ok, Result - CommissionResult};
-map_to_rub(#{type := usd, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
+map_to_rub(#{type := euro, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
     Result = Amount * 80, 
     CommissionResult = Amount * Commission,
     {ok, Result - CommissionResult};   
-map_to_rub(#{type := usd, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
+map_to_rub(#{type := lari, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
     Result = Amount * 29, 
     CommissionResult = Amount * Commission,
     {ok, Result - CommissionResult};
-map_to_rub(#{type := usd, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
+map_to_rub(#{type := peso, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
     Result = Amount * 3, 
     CommissionResult = Amount * Commission,
     {ok, Result - CommissionResult};       
-map_to_rub(#{type := usd, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
+map_to_rub(#{type := krone, amount := Amount, commission := Commission}) when Amount >= 0, is_integer(Amount) ->
     Result = Amount * 10, 
     CommissionResult = Amount * Commission,
     {ok, Result - CommissionResult};
