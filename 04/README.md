@@ -1,12 +1,11 @@
 # Homework #04. Eltex.Academy Erlang #
 
 ____________________________
-Место для выводов
+В ходе выполнения данного домашнего задания была проведена практическая работа по сознанию функций, принимающих в качестве аргумента record и map, по работе с такими функциями. Познакомился с тем как реализована рекурсия в Erlang, и с различиями между обычной и хвостовой рекурсией.
+И в завершении работы потренировался создавать алиасы и анонимные функции.
+
 ___________________________
-
 ## Task 1 ##
-
-
     Eshell V12.2.1  (abort with ^G)
     1> rr("converter.hrl").
     [conv_info]
@@ -26,10 +25,8 @@ ___________________________
     6> converter:rec_to_rub(#conv_info{type = euro, amount = -15, commission = 0.02}).
     Error, invalid arg {conv_info,euro,-15,0.02}
     {error,badarg}
-
-
+__________________________________
 ## Task 2 ##
-
     9> c("converter.erl"). 
     {ok,converter}  
     
@@ -46,10 +43,8 @@ ___________________________
     13> converter: map_to_rub(#{type => euro, amount => -15, commission => 0.02}).
     Error, invalid arg #{amount => -15,commission => 0.02,type => euro}
     {error,badarg}
-
-
+__________________________________
 ## Task 3 ##
-
 ### Task 3.1 ###
 
     14> c("recursion.erl"). 
@@ -64,8 +59,6 @@ ___________________________
     17> recursion:tail_fac(0).
     1
 
-
-
 ### Task 3.2 ###
     18> f(X).
     ok
@@ -79,10 +72,8 @@ ___________________________
     [12,12,4,4,7,7,1,1]
     23> recursion:tail_duplicate([]).
     []
-
-
+__________________________________
 ## Task 4 ##
-
     25> Fac = fun recursion:tail_fac/1.
     fun recursion:tail_fac/1
     26> Duplicate = fun recursion:tail_duplicate/1.    
@@ -93,8 +84,7 @@ ___________________________
     
     28> Duplicate([1, 5, 17]).
     [1,1,5,5,17,17]
-
-
+__________________________________
 ## Task 5 ##
     Multiply = fun(X,Y) -> X*Y end.
     #Fun<erl_eval.43.65746770>
