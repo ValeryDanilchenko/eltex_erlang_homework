@@ -5,7 +5,7 @@
 
 filter(Fun, Persons) when is_function(Fun), is_list(Persons) -> 
     lists:filter(Fun, Persons).
-filter(Error) ->
+filter(Fun, Error) ->
     io:format("Error, invalid arg ~p~n", [Error]),
     {error, badarg}.
 
