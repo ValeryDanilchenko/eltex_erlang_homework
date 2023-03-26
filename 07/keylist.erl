@@ -43,13 +43,13 @@ loop(#state{list = List, counter = Counter} = State) ->
 
 
 
-    start(Name) ->
-        {ok, Pid} = spawn(keylist, loop, [#state{}]),
-        register(Name, Pid),
-        MonitorRef = erlang:monitor(process, Pid),
-        {ok, Pid, MonitorRef}.
-    
-    start_link(Name) ->
-        {ok, Pid} = spawn_link(keylist, loop, [#state{}]),
-        register(Name, Pid),
-        Pid.
+start(Name) ->
+    Pid = spawn(keylist, loop, [#state{}]),
+    register(Name, Pid),
+    MonitorRef = erlang:monitor(process, Pid),
+    {ok, Pid, MonitorRef}.
+
+start_link(Name) ->
+    Pid = spawn_link(keylist, loop, [#state{}]),
+    register(Name, Pid),
+    Pid.
