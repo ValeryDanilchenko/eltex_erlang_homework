@@ -17,19 +17,22 @@ loop(#state{list = List, counter = Counter} = State) ->
             loop(NewState);
 
         {From, take, Key} ->
-            {Result, NewList} = case lists:keytake(Key, 1, List) of
-                {value, {_, Value, Comment}, Rest} -> {{ok, Value, Comment}, Rest};
-                false -> {not_found, List}
-            end,
+            {Result, NewList} = 
+                case lists:keytake(Key, 1, List) of
+                    {value, {_, Value, Comment}, Rest} -> 
+                            {{ok, Value, Comment}, Rest};
+                    false -> {not_found, List}
+                end,
             NewState = State#state{list = NewList, counter = Counter + 1},
             From ! {Result, NewState#state.counter},
             loop(NewState);
 
         {From, find, Key} ->
-            Result = case lists:keyfind(Key, 1, List) of
-                {Key, Value, Comment} -> {ok, Value, Comment};
-                false -> not_found
-            end,
+            Result = 
+                case lists:keyfind(Key, 1, List) of
+                    {Key, Value, Comment} -> {ok, Value, Comment};
+                    false -> not_found
+                end,
             NewState = State#state{counter = Counter + 1},
             From ! {Result, NewState#state.counter},
             loop(NewState);
