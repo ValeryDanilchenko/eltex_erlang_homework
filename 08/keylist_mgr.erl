@@ -29,7 +29,7 @@ loop(#state{children = Children} = State) ->
                     loop(State)
             end;
         stop ->
-            exit(normal);
+            exit(kill);
         {From, get_names} ->
             Names = [Name || {Name, _Pid} <- Children],
             From ! {ok, Names},
