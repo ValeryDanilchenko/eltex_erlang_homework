@@ -18,11 +18,11 @@ loop(#state{children = Children} = State) ->
                     loop(NewState)
             end;
         {From, stop_child, Name} ->
-            case proplists:is_defined(Name, Children) of
-                {Name, Pid} ->
-                    keylist:stop(Pid),
+             case proplists:is_defined(Name, Children) of
+                true ->
+                    exit(whereis(Name), stop_child),
                     NewState = State#state{children = proplists:delete(Name, Children)},
-                    From ! ok,
+                    From ! {ok, NewState},
                     loop(NewState);
                 false ->
                     From ! {error, not_found},
