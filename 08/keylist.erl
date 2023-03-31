@@ -30,7 +30,8 @@ loop(#state{list = List, counter = Counter} = State) ->
         {From, find, Key} ->
             Result = 
                 case lists:keyfind(Key, 1, List) of
-                    {Key, Value, Comment} -> {ok, Value, Comment};
+                    {Key, Value, Comment} -> 
+                        {ok, Value, Comment};
                     false -> not_found
                 end,
             NewState = State#state{counter = Counter + 1},

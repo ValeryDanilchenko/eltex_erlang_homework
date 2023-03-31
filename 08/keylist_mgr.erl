@@ -35,9 +35,15 @@ loop(#state{children = Children} = State) ->
             From ! {ok, Names},
             loop(State);
         {'EXIT', Pid, Reason} ->
-            io:format("Process ~p exited with reason: ~p~n", [Pid, Reason]),
-            NewState = State#state{children = proplists:delete(Pid, Children)},
-            loop(NewState)
+            case lists:keyfind(Pid, 2, Children) of
+                {Name, Pid} ->
+                    io:format("Process ~p 'DOWN' with reason: ~p~n", [Pid, Reason]),
+                    NewState = State#state{children = proplists:delete(Name, Children)},
+                    loop(NewState);
+                false ->
+                    io:format("Process ~p undefined ~n",[Pid]),
+                    loop(State)
+            end
     end.
 
 start() ->
