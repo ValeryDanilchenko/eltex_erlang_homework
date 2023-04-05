@@ -1,6 +1,7 @@
 %%  @doc process menager
 -module(keylist_mgr).
 
+
 %% @type map includes info about starting process: it`s name and is it permonentor not
 %% if it is we will restrt it by the time it crash
 -type(parameters() :: #{
@@ -80,6 +81,7 @@ stop() ->
 get_names() ->
     keylist_mgr ! {self(), get_names},
     ok.
+
 
 
 %%%%%% PRIVATE FUNCTIONS %%%%%%

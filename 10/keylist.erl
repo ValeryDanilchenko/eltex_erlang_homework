@@ -4,6 +4,7 @@
 
 -record(state, {list = [], counter = 0}).
 
+
 %% @doc API function thats register new process and starts main loop
 -spec(init(atom()) -> 
     no_return()).
