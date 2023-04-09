@@ -2,7 +2,16 @@
 -export([loop/1, init/1, terminate/0 ]).
 -export([add/4, is_member/2, take/2, find/2, delete/2, start/1, start_link/1, stop/1]).
 
--record(state, {list = [], counter = 0}).
+%% @type describes element
+-type(state_element() :: {
+    Key :: atom() | string(), 
+    Value :: atom() | string(), 
+    Comment:: atom() | string()
+}).
+
+-record(state, {
+    list = []   :: list(state_element()),
+    counter = 0 :: non_neg_integer()}).
 
 
 %% @doc API function thats register new process and starts main loop
@@ -16,31 +25,21 @@ init(Name) ->
 -spec(start(Name :: atom()) -> 
     {Pid :: pid(), MonitorRef :: reference()}).
 start(Name) ->
-    Pid = spawn(?MODULE, init, [#state{}]),
-    register(Name, Pid),
-    MonitorRef = erlang:monitor(process, Pid),
-    {ok, Pid, MonitorRef}.
+    {Pid, MonitorRef} = spawn_monitor(keylist, init, [Name]),
+    {Pid, MonitorRef}.
 
 
 %% @doc API function spawning new linked process
 -spec(start_link(Name :: atom()) ->
     Pid :: pid()).
 start_link(Name) ->
-    Pid = spawn_link(?MODULE, init, [#state{}]),
-    register(Name, Pid),
+    Pid = spawn_link(keylist, init, [Name]),
     Pid.
 
 %% @doc API function to exit process
 -spec(terminate() -> 
     ok).
 terminate() ->
-    ok.
-
-%% @doc API function that stops main process
--spec(stop(Name :: atom()) ->
-    ok).
-stop(Name)->
-    Name ! stop,
     ok.
 
 %% @doc API function thats add new element to the state
@@ -78,11 +77,16 @@ delete(Name, Key)->
     Name ! {self(), delete, Key},
     ok.
 
+%% @doc API function that stops main process
+-spec(stop(Name :: atom()) ->
+    ok).
+stop(Name)->
+    Name ! stop,
+    ok.
 
 
 %%%%%% PRIVATE FUNCTIONS %%%%%%
 
-%% @doc The main loop that sincronously handle the commands from manager
 -spec(loop(#state{list :: list(), counter :: non_neg_integer()}) ->
     ok).
 loop(#state{list = List, counter = Counter} = State) ->

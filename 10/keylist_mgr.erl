@@ -2,7 +2,7 @@
 -module(keylist_mgr).
 
 
-%% @type map includes info about starting process: it`s name and is it permonentor not
+%% @type includes info about starting process: it`s name and is it permonentor not
 %% if it is we will restrt it by the time it crash
 -type(parameters() :: #{
     name => atom(),
@@ -32,14 +32,13 @@ init() ->
 -spec(start() -> 
     {ok, Pid :: pid(), MonitorRef :: reference()}).
 start() ->
-    {Pid, MonitorRef} = spawn_monitor(?MODULE, init, [#state{}]),
+    {Pid, MonitorRef} = spawn_monitor(?MODULE, init, []),
     {ok, Pid, MonitorRef}.
 
 
 
 %% @doc API function for stop process manager and stop all child processes
--spec(terminate(#state{children :: list(), permanent :: list()}) -> 
-    ok).
+-spec(terminate(#state{children :: list(), permanent :: list()}) -> ok).
 terminate(#state{children = _Children} = State) ->
     lists:foreach(
                 fun({Name, _Pid}) ->
@@ -49,20 +48,17 @@ terminate(#state{children = _Children} = State) ->
                 ok.
 
 %% @doc API function sending message to main process initialising starting the child process
--spec(start_child(parameters()) ->
-    none() | {error, atom()}).
-start_child(Params) ->
-    case Params of
-        #{name := _Name , restart := _Restart} ->
-            keylist_mgr ! {self(), start_child, Params};
-        _ ->
-            {error, badarg}
-    end.
+-spec(start_child(parameters()) -> ok | badarg).
+start_child(#{name := _Name , restart := _Restart} = Params) ->
+    keylist_mgr ! {self(), start_child, Params},
+    ok;
+start_child(_Params) ->
+    badarg.
 
     
  
 %% @doc API function sending message to main process which stops this child process
--spec(stop_child(Name :: atom()) -> none()).    
+-spec(stop_child(Name :: atom()) -> ok).    
 stop_child(Name) ->
     keylist_mgr ! {self(), stop_child, Name},
     ok.
@@ -70,28 +66,23 @@ stop_child(Name) ->
 
 
 %% @doc API function sending message 'stop' to the main process which stops all the children and itself 
--spec(stop() -> none()).
+-spec(stop() -> ok).
 stop() ->
     keylist_mgr ! stop,
     ok.
 
 
 %% @doc API function sending message to the main process which sends info about child processes
--spec(get_names() -> none()).
+-spec(get_names() -> ok).
 get_names() ->
     keylist_mgr ! {self(), get_names},
     ok.
 
 
-
 %%%%%% PRIVATE FUNCTIONS %%%%%%
 
-
-%% @doc the main function that process commands incoming with mesages from API functions
-%% can spawn_link new processes, delete processes, give names of already running processes, restart or log exit processes or exit main process keylist_mgr
-%% it records process names and parameters into the #state
 -spec(loop(#state{children :: list({string(), pid()}), permanent :: list(pid())}) ->
-    string() | none()).
+    ok).
 loop(#state{children = Children, permanent = Permanent} = State) ->
     receive
         {From, start_child, #{name := Name, restart := Restart}}  ->
