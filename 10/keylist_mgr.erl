@@ -39,12 +39,12 @@ start() ->
 
 %% @doc API function for stop process manager and stop all child processes
 -spec(terminate(#state{children :: list(), permanent :: list()}) -> ok).
-terminate(#state{children = _Children} = State) ->
+terminate(#state{children = Children}) ->
     lists:foreach(
                 fun({Name, _Pid}) ->
                     keylist:stop(Name)
                 end,
-                State#state.children),
+                Children),
                 ok.
 
 %% @doc API function sending message to main process initialising starting the child process
@@ -87,7 +87,7 @@ loop(#state{children = Children, permanent = Permanent} = State) ->
     receive
         {From, start_child, #{name := Name, restart := Restart}}  ->
             case proplists:is_defined(Name, Children) of
-                {Name, _Pid} ->
+                true ->
                     io:format("Process ~p is alredy started  ~n",[Name]),
                     From ! {error, already_started},
                     loop(State);

@@ -95,25 +95,35 @@ loop(#state{list = List, counter = Counter} = State) ->
             NewState = State#state{list = [{Key, Value, Comment} | List], counter = Counter + 1},
             From ! {ok, NewState},
             loop(NewState);
+
         {From, is_member, Key} ->
             Result = lists:keymember(Key, 1, List),
             NewState = State#state{counter = Counter + 1},
             From ! {Result, NewState},
             loop(NewState);
+
         {From, take, Key} ->
-            {_, Element, NewList} = lists:keytake(Key, 1, List),
-            NewState = State#state{list = NewList, counter = Counter + 1},
-            From ! {Element, NewState},
+            Result = lists:keytake(Key, 1, List),
+            From ! {ok, Result, Counter + 1},
+            case Result of
+                false ->
+                    NewState = State#state{list = List, counter = Counter + 1};
+                _ -> 
+                    NewState = State#state{list = element(3, Result), counter = Counter + 1}
+            end,
             loop(NewState);
+
         {From, find, Key} ->
             Element = lists:keyfind(Key, 1, List),
             NewState = State#state{counter = Counter + 1},
             From ! {Element, NewState},
             loop(NewState);
+
         {From, delete, Key} ->
             NewState = State#state{list = lists:keydelete(Key, 1, List), counter = Counter + 1},
             From ! {ok, NewState},
             loop(NewState); 
+
         stop ->
             keylist:terminate()
     end.
