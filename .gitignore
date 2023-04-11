@@ -7,11 +7,10 @@
 05/persons.beam
 09/keylist_mgr.beam
 09/keylist.beam
-.gitignore
 10/keylist.beam
 10/keylist_test.beam
-.gitignore
 10/keylist_mgr.beam
 10/keylist_mgr_test.beam
 09/keylist_mgr_test1.beam
 09/keylist_mgr_test.beam
+.gitignore
