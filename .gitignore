@@ -14,3 +14,8 @@
 10/keylist_mgr.beam
 10/keylist_mgr_test.beam
 .gitignore
+09/keylist_mgr_test1.erl
+10/keylist_mgr_test1.beam
+12/keylist.beam
+12/keylist_mgr.beam
+12/keylist_test.beam
