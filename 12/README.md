@@ -1,177 +1,182 @@
 # Homework #12. Eltex.Academy Erlang #
 
 _______________________________
-Реализовал keylist и keylist_mgr на основе gen_server, оформил к ним документацию и спеки, тесты для keylist 
-
-единственное не успел ошормить ReadMe.md
+Реализовал keylist и keylist_mgr на основе gen_server, оформил к ним документацию и спеки, тесты для keylist. Проверил работу модулей с помощью Eshell и Eunit 
 ______________
 
-
 ## Task 1 ##
-Создание процесса-менеджера и рабочих процессов с помощью API функций 
+### Проверка модуля keylist ###
+    Eshell V12.2.1  (abort with ^G)
+    1> c(keylist).
+    {ok,keylist}
+   
+    3> keylist:start(keylist1).
+    {ok,{<0.92.0>,#Ref<0.4016829279.2647130113.241284>}}
 
-    3> keylist_mgr: start().
-    {ok,<0.92.0>,#Ref<0.2183591503.3877371905.228914>}
+    4> keylist:start_link(keylist2).
+    {ok,<0.94.0>}
 
-    4> keylist_mgr: start_child(keylist1).
-    {<0.80.0>,start_child,keylist1}
-    5> keylist_mgr: start_child(keylist2).
-    {<0.80.0>,start_child,keylist2}
+    5> keylist:add(keylist1, bob, 11, "comment").
+    {ok,{state,[{bob,11,"comment"}],1}}
+    6> keylist:add(keylist1, dod, 22, "comment").
+    {ok,{state,[{dod,22,"comment"},{bob,11,"comment"}],2}}
+    7> keylist:add(keylist1, dad, 33, "comment").
+    {ok,{state,[{dad,33,"comment"},
+                {dod,22,"comment"},
+                {bob,11,"comment"}],
+            3}}
 
+    8> keylist:add(keylist1, bad, 44,  "comment").
+    {ok,{state,[{bad,44,"comment"},
+                {dad,33,"comment"},
+                {dod,22,"comment"},
+                {bob,11,"comment"}],
+            4}}
+    9> keylist:is_member(keylist1, bob).                
+    {true,5}
+    10> keylist:find(keylist1, bob).     
+    {{bob,11,"comment"},6}
+    11> keylist:print_state(keylist1).
+    [{bad,44,"comment"},
+    {dad,33,"comment"},
+    {dod,22,"comment"},
+    {bob,11,"comment"}]
+    12> keylist:take(keylist1, bob).  
+    {ok,{value,{bob,11,"comment"},
+            [{bad,44,"comment"},{dad,33,"comment"},{dod,22,"comment"}]},
+        7}
+
+    13> keylist:print_state(keylist1).   
+    [{bad,44,"comment"},{dad,33,"comment"},{dod,22,"comment"}]
+    14> keylist:take(keylist1, bob).     
+    {false,badkey,8}
+    15> keylist:find(keylist1, bob).
+    {false,9}
+    16> keylist:delete(keylist1, bob).
+    {ok,{state,[{bad,44,"comment"},
+                {dad,33,"comment"},
+                {dod,22,"comment"}],
+            10}}
+
+    17> keylist:delete(keylist1, dod).
+    {ok,{state,[{bad,44,"comment"},{dad,33,"comment"}],11}}
+
+    18> keylist:print_state(keylist1).
+    [{bad,44,"comment"},{dad,33,"comment"}]
+
+### Тесты для модуля keylist ###
+    21> c(keylist_test).
+    {ok,keylist_test}
+
+    22> eunit:test(keylist_test).
+        All 5 tests passed.
+    ok
 ---
 
-Отправка сообщений в рабочй процесс с помощью API для модуля keylist
+## Task 2 ##
+### Проверка модуля keylist ###
+    18> c(keylist_mgr).
+    keylist_mgr.erl:4:2: Warning: undefined callback function handle_cast/2 (behaviour 'gen_server')
+    %    4| -behaviour(gen_server).
+    %     |  ^
 
-    6> keylist:add(keylist1, bob, 23, "male").
-    {<0.80.0>,add,bob,23,"male"}
-    7> keylist:add(keylist1, kate, 20, "female").
-    {<0.80.0>,add,kate,20,"female"}
-    8> keylist:add(keylist1, jack, 40, "male").  
-    {<0.80.0>,add,jack,40,"male"}
-
-    9> flush().
-    Shell got {ok,<0.94.0>}
-    Shell got {ok,<0.96.0>}
-    Shell got {ok,1}
-    Shell got {ok,2}
-    Shell got {ok,3}
-    ok
-
-    10> keylist:find(keylist1, jack).            
-    {<0.80.0>,find,jack}
-    11> keylist:take(keylist1, jack).
-    {<0.80.0>,take,jack}
-    12> keylist:is_member(keylist1, jack).
-    {<0.80.0>,is_member,jack}
-
-    13> flush().
-    Shell got {{ok,40,"male"},4}
-    Shell got {{ok,40,"male"},5}
-    Shell got {false,6}
-    ok
-    14> keylist:delete(keylist1, kate).    
-    {<0.80.0>,delete,kate}
-    15> flush().
-    Shell got {ok,7}
-    ok
-    16> keylist:delete(keylist1, jack).
-    {<0.80.0>,delete,jack}
-    17> flush().
-    Shell got {ok,8}
-    ok
-    18> keylist:find(keylist1, jack).  
-    {<0.80.0>,find,jack}
-    19> flush().
-    Shell got {not_found,9}
-    ok
-    20> keylist:find(keylist1, kate).
-    {<0.80.0>,find,kate}
-    21> keylist:find(keylist1, bob). 
-    {<0.80.0>,find,bob}
-    22> flush().
-    Shell got {not_found,10}
-    Shell got {{ok,23,"male"},11}
-    ok
-    23>
-
-
-
-
-    Eshell V12.2.1  (abort with ^G)
-    1> c(keylist_mgr).
     {ok,keylist_mgr}
-    2> keylsit_mgr:start().
-    ** exception error: undefined function keylsit_mgr:start/0
-    3> keylist_mgr:start().
-    {ok,<0.89.0>,#Ref<0.93793695.3874750465.164959>}
-    4> keylist_mgr:start_child(keylist1).
-    {<0.87.0>,start_child,keylist1}
-    5> keylist_mgr:start_child(keylist2).
-    {<0.87.0>,start_child,keylist2}
-    6> keylist_mgr:start_child(keylist3).
-    {<0.87.0>,start_child,keylist3}
-    7> keylist_mgr:stop_child(keylist3). 
-    Process <0.95.0> undefined
-    {<0.87.0>,stop_child,keylist3}
-    8> keylist_mgr:get_names().         
-    {<0.87.0>,get_names}
-    9> flush().
-    Shell got {ok,<0.92.0>}
-    Shell got {ok,<0.93.0>}
-    Shell got {ok,<0.95.0>}
-    Shell got {ok,{state,[{keylist2,<0.93.0>},{keylist1,<0.92.0>}]}}
-    Shell got {ok,[keylist2,keylist1]}
+    19> keylist_mgr:start().
+    {ok,{<0.137.0>,#Ref<0.2922963125.2112618507.202941>}}
+    20> keylist_mgr:start_child(#{name => keylist1, restart => temporary}).
+    {ok,<0.139.0>}
+    21> keylist_mgr:start_child(#{name => keylist2, restart => permanent}).
+    Msg received by <0.139.0>: Aded new process keylist2 with pid <0.141.0>
+    {ok,<0.141.0>}
+    22> keylist_mgr:start_child(#{name => keylist2, restart => temporary}).
+    Process keylist2 is alredy started
+    {error,already_started}
+    23> keylist_mgr:start_child(#{name => keylist3, restart => temporary}).
+    {ok,<0.144.0>}
+    Msg received by <0.141.0>: Aded new process keylist3 with pid <0.144.0>
+    Msg received by <0.139.0>: Aded new process keylist3 with pid <0.144.0>
+    24>
+
+### Остановка keylist_mgr через stop_child и stop ###
+    24> keylist_mgr:stop_child(keylist1).                                  
+    {ok,{state,[{keylist3,<0.144.0>},{keylist2,<0.141.0>}],
+            [<0.141.0>]}}
+    25>
+    25>
+    25> keylist_mgr:stop().              
     ok
-    10> keylist_mgr:stop().     
-    {stop}
-    11> flush().
-    ok
-    12> whereis(keylist_mgr).
-    <0.89.0>
-    13> keylist_mgr ! stop().
-    ** exception error: undefined shell command stop/0
-    14> whereis(keylist1).   
-    <0.92.0>
-    15> exit(whereis(keylist1), normal).
-    true
-    16> whereis(keylist1).
-    <0.92.0>
-    17> exit(whereis(keylist1), kill).  
-    Process <0.92.0> 'DOWN' with reason: killed
-    true
-    18> whereis(keylist1).
+    26> whereis(keylist_mgr).
     undefined
-    19> whereis(keylist2).
-    <0.93.0>
-    20> exit(whereis(keylist_mgr), normal).
-    Process <0.103.0> undefined
+    27> whereis(keylist1).   
+    undefined
+    28> whereis(keylist2).
+    undefined
+    29> whereis(keylist3).
+    undefined
+
+### Тесты для модуля keylist_mgr ###
+    31> eunit:test(keylist_mgr_test).
+    All 3 tests passed.
+    ok
+
+### Перезапуск keylist ###
+    1> keylist_mgr:start().
+    {ok,{<0.82.0>,#Ref<0.3406602343.509083650.152669>}}
+    2> keylist_mgr:start_child(#{name => keylist1, restart => temporary}).
+    {ok,<0.84.0>}
+
+    3> keylist_mgr:start_child(#{name => keylist2, restart => permanent}).
+    Msg received by <0.84.0>: Aded new process keylist2 with pid <0.86.0>
+    {ok,<0.86.0>}
+
+    4> exit(whereis(keylist1), normal).
     true
-    21> whereis(keylist_mgr).
-    <0.89.0>
+    5> whereis(keylist1).
+    <0.84.0>
+    6> exit(whereis(keylist1), kill).  
+    Process <0.84.0> 'DOWN' with reason: killed
+    true
+    7> whereis(keylist1).
+    undefined
+
+    8> exit(whereis(keylist2), normal).
+    true
+    9> whereis(keylist2).
+    <0.86.0>
+    10> exit(whereis(keylist2), kill).  
+    Process <0.86.0> 'DOWN' with reason: killed. Restared with PID <0.94.0>
+    true
+    11> whereis(keylist2).
+    <0.94.0>
+
+### Завершение keylist_mgr с помощью exit ###
+    14> keylist_mgr:start().
+    {ok,{<0.100.0>,#Ref<0.3406602343.509083650.152741>}}
+    15> keylist_mgr:start_child(#{name => keylist1, restart => temporary}).
+    {ok,<0.102.0>}
+    16> keylist_mgr:start_child(#{name => keylist2, restart => permanent}).
+    Msg received by <0.102.0>: Aded new process keylist2 with pid <0.104.0>
+    {ok,<0.104.0>}
+    17>
+    17>
+    17> whereis(keylist_mgr).
+    <0.100.0>
+    18> exit(whereis(keylist_mgr), normal).
+    true
+    19> whereis(keylist_mgr).
+    undefined
+    20>                      
+    20>
+    20>
+    20>
+    20> keylist_mgr:start().
+    {ok,{<0.111.0>,#Ref<0.3406602343.509083650.152776>}}
+    21> keylist_mgr:start_child(#{name => keylist1, restart => temporary}).
+    {ok,<0.113.0>}
+    22>
+    22>
     22> exit(whereis(keylist_mgr), kill).  
     true
     23> whereis(keylist_mgr).
     undefined
-    24> flush().
-    ok
-    25> keylist_mgr:start().
-    {ok,<0.116.0>,#Ref<0.93793695.3874750465.165070>}
-    26> keylist_mgr:start_child(keylist1).
-    {<0.103.0>,start_child,keylist1}
-    27> keylist_mgr:start_child(keylist2).
-    {<0.103.0>,start_child,keylist2}
-    28> keylist_mgr:start_child(keylist3).
-    {<0.103.0>,start_child,keylist3}
-    29> keylist_mgr ! stop;
-    29> keylist_mgr ! stop.
-    * 2:13: syntax error before: '!'
-    29> keylist_mgr ! stop.
-    stop
-    30> flush().
-    Shell got {ok,<0.118.0>}
-    Shell got {ok,<0.120.0>}
-    Shell got {ok,<0.122.0>}
-    Shell got {'DOWN',#Ref<0.93793695.3874750465.165070>,process,<0.116.0>,kill}
-    ok
-    31> c(keylist_mgr).
-    {ok,keylist_mgr}
-    32> keylist_mgr:start().
-    {ok,<0.132.0>,#Ref<0.93793695.3874750465.165157>}
-    33> keylist_mgr:start_child(keylist1).
-    {<0.103.0>,start_child,keylist1}
-    34> keylist_mgr:start_child(keylist2).
-    {<0.103.0>,start_child,keylist2}
-    35> keylist_mgr:start_child(keylist3).
-    {<0.103.0>,start_child,keylist3}
-    36> keylist_mgr:stop().  
-    stop
-    37> flush().
-    Shell got {ok,<0.134.0>}
-    Shell got {ok,<0.136.0>}
-    Shell got {ok,<0.138.0>}
-    Shell got {'DOWN',#Ref<0.93793695.3874750465.165157>,process,<0.132.0>,kill}
-    ok
-    38>
-
-
-
+    24>

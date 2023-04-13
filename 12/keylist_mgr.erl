@@ -34,7 +34,7 @@
 -spec(start() -> 
     {ok, {Pid :: pid(), MonitorRef :: reference()}}).
 start() ->
-    gen_server:start({local, ?MODULE}, ?MODULE, [], []).
+    gen_server:start_monitor({local, ?MODULE}, ?MODULE, [], []).
 
 
 %% @doc API function for stop process manager and stop all child processes
@@ -44,7 +44,7 @@ stop() ->
 
 %% @doc sync API function initialising starting the child process
 -spec(start_child(parameters()) -> 
-    {ok, pid()} | {error, already_started}).
+    {ok, pid()} | {error, {already_started, pid()}}).
 start_child(#{name := _Name , restart := _Restart} = Params) ->
     gen_server:call(?MODULE, {start_child, Params}).
 
@@ -103,7 +103,11 @@ handle_call({stop_child, Name}, _From, #state{children = Children, permanent = P
 handle_call(get_names, _From, #state{children = Children, permanent = Permanent} = State) 
     when is_list(Children), is_list(Permanent) ->
         Names = proplists:get_keys(Children),
-        {reply, {ok, Names}, State}.
+        {reply, {ok, Names}, State};
+
+handle_call(Msg, _From, State) ->
+    io:format("Received not recogniseble message: ~p~n", [Msg]),
+    {reply, {error, badarg}, State}.
 
 
 
