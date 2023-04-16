@@ -19,3 +19,8 @@
 12/keylist.beam
 12/keylist_mgr.beam
 12/keylist_test.beam
+12/keylist_mgr_test.beam
+13/keylist.beam
+13/keylist_mgr.beam
+14/keylist.beam
+14/keylist_mgr.beam
