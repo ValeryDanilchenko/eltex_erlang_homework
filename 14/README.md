@@ -1,7 +1,8 @@
 # Homework #14. Eltex.Academy Erlang #
 
 _______________________________
-В ходе данной работы добавил в апи функции для 
+В ходе данной работы добавил в апи функции match, match_object, select разобрался как составлять патерны для матчинга 
+Разобрался так же как работать с таблицами DETS
 ______________
 
 ## Task 2 ##
@@ -132,15 +133,17 @@ ______________
     [#person{id = 4,name = "Rose",age = 30,gender = "female"}]]
    
 Закрываем таблицу и пытаемся прочитать данные из таблицы
+   
     12> dets:close(Name).
     ok
-   
+
     15> dets:match(Name, '$1').   
     ** exception error: bad argument
         in function  dets:match/2
             called as dets:match(person,'$1')
 
 Открываем таблицу снова
+    
     18> {ok, Table} = dets:open_file("./person").
     {ok,#Ref<0.2544596038.3586916354.75676>}
 
@@ -150,7 +153,8 @@ ______________
     [#person{id = 3,name = "Jane",age = 18,gender = "female"}],
     [#person{id = 4,name = "Rose",age = 30,gender = "female"}]]
 
-Завершаем eshell процесс и открываем таблицу снова 
+Завершаем eshell процесс и открываем таблицу снова
+   
     20> exit(self()).
     ** exception exit: <0.117.0>
     21> f().
@@ -164,6 +168,6 @@ ______________
     [#person{id = 2,name = "Dod",age = 25,gender = "male"}],
     [#person{id = 3,name = "Jane",age = 18,gender = "female"}],
     [#person{id = 4,name = "Rose",age = 30,gender = "female"}]]
-    
+
     24> dets:close(Name).          
     ok
