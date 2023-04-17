@@ -1,8 +1,10 @@
 # Homework #14. Eltex.Academy Erlang #
 
 _______________________________
-
+В ходе данной работы добавил в апи функции для 
 ______________
+
+## Task 2 ##
     Eshell V12.2.1  (abort with ^G)
     1> c(keylist).
     {ok,keylist}
@@ -97,3 +99,71 @@ ______________
         [key2,"value1"],
         [key1,"value1"]]}
    
+
+
+## Task 3 ##
+Создаем DETS, добавляем туда значения и считываем их
+
+    1> rd(person, {id, name, age, gender}).
+    person
+    4> {ok, Name} = dets:open_file(person, [{type, set}, {file, "./person"}, {keypos, #person.id}]).
+    {ok,person}
+    5> dets:insert(Name, #person{id = 1, name = "Bob", age = 20, gender = "male"}).
+    ok
+    6> dets:insert(Name, #person{id = 2, name = "Dod", age = 25, gender = "male"}).
+    ok
+    7> dets:insert(Name, #person{id = 3, name = "Jane", age = 18, gender = "female"}).
+    ok
+    8> dets:insert(Name, #person{id = 4, name = "Rosr", age = 30, gender = "female"}).
+    ok
+  
+    9> TableValues = dets:match(Name, '$1').
+    [[#person{id = 1,name = "Bob",age = 20,gender = "male"}],
+    [#person{id = 2,name = "Dod",age = 25,gender = "male"}],
+    [#person{id = 3,name = "Jane",age = 18,gender = "female"}],
+    [#person{id = 4,name = "Rosr",age = 30,gender = "female"}]]
+  
+    10> dets:insert(Name, #person{id = 4, name = "Rose", age = 30, gender = "female"}).
+    ok
+    11> TableValues1 = dets:match(Name, '$1').
+    [[#person{id = 1,name = "Bob",age = 20,gender = "male"}],
+    [#person{id = 2,name = "Dod",age = 25,gender = "male"}],
+    [#person{id = 3,name = "Jane",age = 18,gender = "female"}],
+    [#person{id = 4,name = "Rose",age = 30,gender = "female"}]]
+   
+Закрываем таблицу и пытаемся прочитать данные из таблицы
+    12> dets:close(Name).
+    ok
+   
+    15> dets:match(Name, '$1').   
+    ** exception error: bad argument
+        in function  dets:match/2
+            called as dets:match(person,'$1')
+
+Открываем таблицу снова
+    18> {ok, Table} = dets:open_file("./person").
+    {ok,#Ref<0.2544596038.3586916354.75676>}
+
+    19> dets:match(Table, '$1').   
+    [[#person{id = 1,name = "Bob",age = 20,gender = "male"}],
+    [#person{id = 2,name = "Dod",age = 25,gender = "male"}],
+    [#person{id = 3,name = "Jane",age = 18,gender = "female"}],
+    [#person{id = 4,name = "Rose",age = 30,gender = "female"}]]
+
+Завершаем eshell процесс и открываем таблицу снова 
+    20> exit(self()).
+    ** exception exit: <0.117.0>
+    21> f().
+    ok
+    22> {ok, Name} = dets:open_file("./person"). 
+    {ok,#Ref<0.2544596038.3586916354.75702>}
+    23>
+    23>
+    23> dets:match(Name, '$1'). 
+    [[#person{id = 1,name = "Bob",age = 20,gender = "male"}],
+    [#person{id = 2,name = "Dod",age = 25,gender = "male"}],
+    [#person{id = 3,name = "Jane",age = 18,gender = "female"}],
+    [#person{id = 4,name = "Rose",age = 30,gender = "female"}]]
+    
+    24> dets:close(Name).          
+    ok

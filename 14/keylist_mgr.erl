@@ -24,10 +24,10 @@
     }).
 
 %% API 
--export([ start/0, stop/0, start_child/1, stop_child/1,  get_names/0]). 
+-export([ start/0, stop/0, stop_async/0, start_child/1, stop_child/1,  get_names/0]). 
 
 %% Callback
--export([init/1, terminate/2, handle_call/3, handle_info/2]).
+-export([init/1, terminate/2, handle_call/3, handle_cast/2, handle_info/2]).
 
 
 %%%%%%%%%% API %%%%%%%%%%
@@ -43,6 +43,11 @@ start() ->
 -spec(stop() -> ok).
 stop() ->
     gen_server:stop(?MODULE).
+
+%% @doc async API function for generic server stop_async process to exit with 'normal' reason
+-spec(stop_async() -> ok).
+stop_async() ->
+    gen_server:cast(?MODULE, stop_async).
 
 %% @doc sync API function initialising starting the child process
 -spec(start_child(parameters()) -> 
@@ -112,6 +117,9 @@ handle_call(Msg, _From, State) ->
     io:format("Received not recogniseble message: ~p~n", [Msg]),
     {reply, {error, badarg}, State}.
 
+handle_cast(stop_async, State) ->
+    terminate(reason, State),
+    {noreply, State}.
 
 
 handle_info({'EXIT', Pid, Reason}, #state{children = Children, permanent = Permanent} = State)
