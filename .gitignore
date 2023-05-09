@@ -1,16 +1,1 @@
-05/exceptions.beam
-05/persons.beam
-06/protocol.beam
-07/keylist.beam
-08/keylist_mgr.beam
-08/keylist.beam
-05/persons.beam
-09/keylist_mgr.beam
-09/keylist.beam
-09/keylist_mgr_test1.beam
-09/keylist_mgr_test.beam
-10/keylist.beam
-10/keylist_test.beam
-10/keylist_mgr.beam
-10/keylist_mgr_test.beam
-.gitignore
+*.beam

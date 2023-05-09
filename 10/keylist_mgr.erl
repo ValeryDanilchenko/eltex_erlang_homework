@@ -2,6 +2,7 @@
 -module(keylist_mgr).
 
 
+
 %% @type includes info about starting process: it`s name and is it permonentor not
 %% if it is we will restrt it by the time it crash
 -type(parameters() :: #{
@@ -32,6 +33,7 @@ init() ->
 -spec(start() -> 
     {ok, Pid :: pid(), MonitorRef :: reference()}).
 start() ->
+
     {Pid, MonitorRef} = spawn_monitor(?MODULE, init, []),
     {ok, Pid, MonitorRef}.
 
@@ -44,6 +46,7 @@ terminate(#state{children = Children}) ->
                 fun({Name, _Pid}) ->
                     keylist:stop(Name)
                 end,
+
                 Children),
                 ok.
 
@@ -54,6 +57,7 @@ start_child(#{name := _Name , restart := _Restart} = Params) ->
     ok;
 start_child(_Params) ->
     badarg.
+
 
     
  
@@ -79,8 +83,8 @@ get_names() ->
     ok.
 
 
-%%%%%% PRIVATE FUNCTIONS %%%%%%
 
+%%%%%% PRIVATE FUNCTIONS %%%%%%
 -spec(loop(#state{children :: list({string(), pid()}), permanent :: list(pid())}) ->
     ok).
 loop(#state{children = Children, permanent = Permanent} = State) ->
