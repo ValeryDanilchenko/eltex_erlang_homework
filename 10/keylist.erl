@@ -2,7 +2,18 @@
 -export([loop/1, init/1, terminate/0 ]).
 -export([add/4, is_member/2, take/2, find/2, delete/2, start/1, start_link/1, stop/1]).
 
--record(state, {list = [], counter = 0}).
+
+%% @type describes element
+-type(state_element() :: {
+    Key :: atom() | string(), 
+    Value :: atom() | string(), 
+    Comment:: atom() | string()
+}).
+
+-record(state, {
+    list = []   :: list(state_element()),
+    counter = 0 :: non_neg_integer()}).
+
 
 
 %% @doc API function thats register new process and starts main loop
@@ -16,31 +27,21 @@ init(Name) ->
 -spec(start(Name :: atom()) -> 
     {Pid :: pid(), MonitorRef :: reference()}).
 start(Name) ->
-    Pid = spawn(?MODULE, init, [#state{}]),
-    register(Name, Pid),
-    MonitorRef = erlang:monitor(process, Pid),
-    {ok, Pid, MonitorRef}.
+    {Pid, MonitorRef} = spawn_monitor(keylist, init, [Name]),
+    {Pid, MonitorRef}.
 
 
 %% @doc API function spawning new linked process
 -spec(start_link(Name :: atom()) ->
     Pid :: pid()).
 start_link(Name) ->
-    Pid = spawn_link(?MODULE, init, [#state{}]),
-    register(Name, Pid),
-    Pid.
+    Pid = spawn_link(keylist, init, [Name]),
+
 
 %% @doc API function to exit process
 -spec(terminate() -> 
     ok).
 terminate() ->
-    ok.
-
-%% @doc API function that stops main process
--spec(stop(Name :: atom()) ->
-    ok).
-stop(Name)->
-    Name ! stop,
     ok.
 
 %% @doc API function thats add new element to the state
@@ -79,10 +80,17 @@ delete(Name, Key)->
     ok.
 
 
+%% @doc API function that stops main process
+-spec(stop(Name :: atom()) ->
+    ok).
+stop(Name)->
+    Name ! stop,
+    ok.
+
+
 
 %%%%%% PRIVATE FUNCTIONS %%%%%%
 
-%% @doc The main loop that sincronously handle the commands from manager
 -spec(loop(#state{list :: list(), counter :: non_neg_integer()}) ->
     ok).
 loop(#state{list = List, counter = Counter} = State) ->
@@ -91,25 +99,35 @@ loop(#state{list = List, counter = Counter} = State) ->
             NewState = State#state{list = [{Key, Value, Comment} | List], counter = Counter + 1},
             From ! {ok, NewState},
             loop(NewState);
+
         {From, is_member, Key} ->
             Result = lists:keymember(Key, 1, List),
             NewState = State#state{counter = Counter + 1},
             From ! {Result, NewState},
             loop(NewState);
+
         {From, take, Key} ->
-            {_, Element, NewList} = lists:keytake(Key, 1, List),
-            NewState = State#state{list = NewList, counter = Counter + 1},
-            From ! {Element, NewState},
+            Result = lists:keytake(Key, 1, List),
+            From ! {ok, Result, Counter + 1},
+            case Result of
+                false ->
+                    NewState = State#state{list = List, counter = Counter + 1};
+                _ -> 
+                    NewState = State#state{list = element(3, Result), counter = Counter + 1}
+            end,
             loop(NewState);
+      
         {From, find, Key} ->
             Element = lists:keyfind(Key, 1, List),
             NewState = State#state{counter = Counter + 1},
             From ! {Element, NewState},
             loop(NewState);
+      
         {From, delete, Key} ->
             NewState = State#state{list = lists:keydelete(Key, 1, List), counter = Counter + 1},
             From ! {ok, NewState},
             loop(NewState); 
+
         stop ->
             keylist:terminate()
     end.
