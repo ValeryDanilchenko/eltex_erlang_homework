@@ -2,6 +2,7 @@
 -export([loop/1, init/1, terminate/0 ]).
 -export([add/4, is_member/2, take/2, find/2, delete/2, start/1, start_link/1, stop/1]).
 
+
 %% @type describes element
 -type(state_element() :: {
     Key :: atom() | string(), 
@@ -12,6 +13,7 @@
 -record(state, {
     list = []   :: list(state_element()),
     counter = 0 :: non_neg_integer()}).
+
 
 
 %% @doc API function thats register new process and starts main loop
@@ -34,7 +36,7 @@ start(Name) ->
     Pid :: pid()).
 start_link(Name) ->
     Pid = spawn_link(keylist, init, [Name]),
-    Pid.
+
 
 %% @doc API function to exit process
 -spec(terminate() -> 
@@ -77,12 +79,14 @@ delete(Name, Key)->
     Name ! {self(), delete, Key},
     ok.
 
+
 %% @doc API function that stops main process
 -spec(stop(Name :: atom()) ->
     ok).
 stop(Name)->
     Name ! stop,
     ok.
+
 
 
 %%%%%% PRIVATE FUNCTIONS %%%%%%
@@ -112,13 +116,13 @@ loop(#state{list = List, counter = Counter} = State) ->
                     NewState = State#state{list = element(3, Result), counter = Counter + 1}
             end,
             loop(NewState);
-
+      
         {From, find, Key} ->
             Element = lists:keyfind(Key, 1, List),
             NewState = State#state{counter = Counter + 1},
             From ! {Element, NewState},
             loop(NewState);
-
+      
         {From, delete, Key} ->
             NewState = State#state{list = lists:keydelete(Key, 1, List), counter = Counter + 1},
             From ! {ok, NewState},
