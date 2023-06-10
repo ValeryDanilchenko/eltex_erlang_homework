@@ -1,0 +1,10 @@
+{application,web_rtp,
+             [{description,"An OTP application"},
+              {vsn,"0.1.0"},
+              {registered,[]},
+              {mod,{web_rtp_app,[]}},
+              {applications,[kernel,stdlib,cowboy]},
+              {env,[]},
+              {modules,[web_rtp_app,web_rtp_db,web_rtp_handler,web_rtp_sup]},
+              {licenses,["Apache 2.0"]},
+              {links,[]}]}.
