@@ -1,3 +1,2 @@
 *.beam
-19/web_rtp/_build/
-20/web_rtp/_build/
+**/web_rtp/_build
