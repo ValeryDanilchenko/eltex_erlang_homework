@@ -1,10 +1,7 @@
-05/exceptions.beam
-05/persons.beam
-06/protocol.beam
-07/keylist.beam
-08/keylist_mgr.beam
-08/keylist.beam
-05/persons.beam
-09/keylist.beam
-.gitignore
+*.beam
 
+19/web_rtp/_build/default/lib/web_rtp/include
+19/web_rtp/_build/default/lib/web_rtp/include
+19/web_rtp/_build/default/lib/web_rtp/priv
+20/web_rtp/_build/default/lib/web_rtp/include
+20/web_rtp/_build/default/lib/web_rtp/priv
