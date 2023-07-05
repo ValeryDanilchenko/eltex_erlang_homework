@@ -1,0 +1,25 @@
+# Eltex. Academy
+## Erlang Homework
+![Erlang/OTP](https://img.shields.io/badge/Erlang/OTP-24-green)
+![Rebar3](https://img.shields.io/badge/Rebar3-3.18-red)
+![Elixir](https://img.shields.io/badge/Elixir-1.15.0-blue)
+![COWBOY](https://img.shields.io/badge/COWBOY-2.9.0-yellow)
+![JSONE](https://img.shields.io/badge/JSONE-1.8.0-green)
+
+This repo contins Homeworks from Erlang/OTP + Elixit cource:
+- [Modules, Functions, Case](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/03)
+- [Rec&Map Pattern, Recursion, Fun](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/04)
+- [Higher Order Functions, Try catch, List Comprehensions](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/05)
+- [Bit Syntax, Erlang Process](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/06)
+- [Erlang Process](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/07)
+- [Process (link, monitor), proplist](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/08)
+- [Process (restart), Spec, Edoc, Tests](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/09)
+- [Process, Spec, Edoc, Tests](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/10)
+- [String, Binary, Unicode](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/11)
+- [Gen_server](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/12)
+- [ETS](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/13)
+- [ETS & DETS](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/14)
+- [Gen_statem](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/15)
+- [Supervisors](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/16)
+- [Rebar3, Cowboy](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/19)
+- [Mnesia](https://github.com/ValeryDanilchenko/eltex_erlang_homework/tree/main/20)
